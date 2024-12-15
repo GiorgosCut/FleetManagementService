@@ -1,0 +1,57 @@
+﻿@page "/RestrictCapacity"
+@inject HttpClient Http
+@using API.Models;
+@using FleetAPI.DTOs
+@using FleetAPI.Enums
+@rendermode InteractiveServer
+
+<h3>Create Vessel</h3>
+
+<EditForm Model="@cap" OnValidSubmit="HandleValidSubmit" FormName="RestrictCapacity">
+    <DataAnnotationsValidator />
+
+    <div>
+        <label for="capacity">Enter New Capacity:</label>
+        <InputNumber id="capacity" @bind-Value="cap.NewCapacity" />
+    </div>
+
+    <div>
+        <label for="vesselid">VesselId:</label>
+        <InputNumber id="vesselid" @bind-Value="cap.VesselId" />
+    </div>
+
+    <button type="submit">Change Vessel Capacity</button>
+</EditForm>
+
+<p>@successResponse</p>
+<p>@errorResponse</p>
+
+@code {
+    private RestrictCapacityDTO cap = new RestrictCapacityDTO();
+    private string errorResponse = "";
+    private string successResponse = "";
+    private async Task HandleValidSubmit()
+
+    {
+        errorResponse = "";
+        successResponse = "";
+        try
+        {
+            var response = await Http.PatchAsJsonAsync("https://localhost:44370/api/FleetAPI/RestrictVesselCapacity", cap);
+            if (response.IsSuccessStatusCode)
+            {
+                var createdVessel = await response.Content.ReadFromJsonAsync<bool>();
+                successResponse = "Vessel capacity changed!";
+            }
+            else
+            {
+                errorResponse = await response.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exception (e.g., network issues)
+            successResponse = $"Exception: {ex.Message}";
+        }
+    }
+}

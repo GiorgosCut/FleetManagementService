@@ -1,0 +1,57 @@
+﻿@page "/LoadContainer"
+@inject HttpClient Http
+@using API.Models;
+@using FleetAPI.DTOs
+@using FleetAPI.Enums
+@rendermode InteractiveServer
+
+<h3>Load Container To Vessel</h3>
+
+<EditForm Model="@load" OnValidSubmit="HandleValidSubmit" FormName="LoadContainer">
+    <DataAnnotationsValidator />
+
+    <div>
+        <label for="capacity">Enter Vessel Id:</label>
+        <InputNumber id="vesselid" @bind-Value="load.VesselId" />
+    </div>
+
+    <div>
+        <label for="capacity">Enter Container Id:</label>
+        <InputNumber id="containerid" @bind-Value="load.ContainerId" />
+    </div>
+
+    <button type="submit">Load Container</button>
+</EditForm>
+
+<p>@successResponse</p>
+<p>@errorResponse</p>
+
+@code {
+    private LoadContainerDTO load = new LoadContainerDTO();
+    private string errorResponse = "";
+    private string successResponse = "";
+    private async Task HandleValidSubmit()
+
+    {
+        errorResponse = "";
+        successResponse = "";
+        try
+        {
+            var response = await Http.PatchAsJsonAsync("https://localhost:44370/api/FleetAPI/LoadContainerToVessel", load);
+            if (response.IsSuccessStatusCode)
+            {
+                var createdVessel = await response.Content.ReadFromJsonAsync<Vessel>();
+                successResponse = $"Container with Id {load.ContainerId} loaded onto Vessel with Id {load.VesselId}!";
+            }
+            else
+            {
+                errorResponse = "Could not load container into Vessel";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exception (e.g., network issues)
+            successResponse = $"Exception: {ex.Message}";
+        }
+    }
+}

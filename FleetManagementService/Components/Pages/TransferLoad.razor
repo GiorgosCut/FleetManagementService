@@ -1,0 +1,62 @@
+﻿@page "/TransferLoad"
+@inject HttpClient Http
+@using API.Models;
+@using FleetAPI.DTOs
+@using FleetAPI.Enums
+@rendermode InteractiveServer
+
+<h3>Create Vessel</h3>
+
+<EditForm Model="@transfer" OnValidSubmit="HandleValidSubmit" FormName="TransferLoad">
+    <DataAnnotationsValidator />
+
+    <div>
+        <label for="fromId">Enter current vessel Id:</label>
+        <InputNumber id="fromid" @bind-Value="transfer.FromVesselId" />
+    </div>
+
+    <div>
+        <label for="toid">Enter vessel id to transfer load to:</label>
+        <InputNumber id="toid" @bind-Value="transfer.ToVesselId" />
+    </div>
+
+    <div>
+        <label for="containerid">Enter container id to transfer:</label>
+        <InputNumber id="toid" @bind-Value="transfer.ContainerId" />
+    </div>
+
+    <button type="submit">Transfer Load</button>
+</EditForm>
+
+<p>@successResponse</p>
+<p>@errorResponse</p>
+
+@code {
+    private TransferContainerDTO transfer = new TransferContainerDTO();
+    private string errorResponse = "";
+    private string successResponse = "";
+    private async Task HandleValidSubmit()
+
+    {
+        errorResponse = "";
+        successResponse = "";
+        try
+        {
+            var response = await Http.PatchAsJsonAsync("https://localhost:44370/api/FleetAPI/TransferContainer", transfer);
+            if (response.IsSuccessStatusCode)
+            {
+                var createdVessel = await response.Content.ReadFromJsonAsync<Container>();
+                successResponse = "Load Transfered!";
+            }
+            else
+            {
+                errorResponse = await response.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exception (e.g., network issues)
+            successResponse = $"Exception: {ex.Message}";
+        }
+    }
+}

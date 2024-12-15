@@ -1,0 +1,57 @@
+﻿@page "/AssignFleet"
+@inject HttpClient Http
+@using API.Models;
+@using FleetAPI.DTOs
+@using FleetAPI.Enums
+@rendermode InteractiveServer
+
+<h3>Create Vessel</h3>
+
+<EditForm Model="@fleet" OnValidSubmit="HandleValidSubmit" FormName="AssignFleet">
+    <DataAnnotationsValidator />
+
+    <div>
+        <label for="vesselid">Enter Vessel Id: </label>
+        <InputNumber id="vesselid" @bind-Value="fleet.VesselId" />
+    </div>
+
+    <div>
+        <label for="fleet">Fleet Name: </label>
+        <InputText placeholder="Enter Fleet Name" @bind-Value="fleet.Fleet" />
+    </div>
+
+    <button type="submit">Assign Fleet to Vessel</button>
+</EditForm>
+
+<p>@successResponse</p>
+<p>@errorResponse</p>
+
+@code {
+    private AssignFleetDTO fleet = new AssignFleetDTO();
+    private string errorResponse = "";
+    private string successResponse = "";
+    private async Task HandleValidSubmit()
+
+    {
+        errorResponse = "";
+        successResponse = "";
+        try
+        {
+            var response = await Http.PatchAsJsonAsync("https://localhost:44370/api/FleetAPI/AssignFleetToVessel", fleet);
+            if (response.IsSuccessStatusCode)
+            {
+                var vessel = await response.Content.ReadFromJsonAsync<Vessel>();
+                successResponse = $"Fleet {fleet.Fleet} Assigned to Vessel with Id {fleet.VesselId}!";
+            }
+            else
+            {
+                errorResponse = await response.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exception (e.g., network issues)
+            successResponse = $"Exception: {ex.Message}";
+        }
+    }
+}

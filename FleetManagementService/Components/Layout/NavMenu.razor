@@ -1,0 +1,50 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">FleetManagementService</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/CreateVessel">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Create Vessel
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/CreateContainer">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Create Container
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/LoadContainer">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Load Container
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/RestrictCapacity">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Restrict Vessel Capacity
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/TransferLoad">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Transfer Load 
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/AssignFleet">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Assign Fleet To Vessel
+            </NavLink>
+        </div>
+    </nav>
+</div>
+

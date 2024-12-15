@@ -1,0 +1,57 @@
+﻿@page "/CreateVessel"
+@inject HttpClient Http
+@using API.Models;
+@using FleetAPI.DTOs
+@using FleetAPI.Enums
+@rendermode InteractiveServer
+
+<h3>Create Vessel</h3>
+
+<EditForm Model="@vessel" OnValidSubmit="HandleValidSubmit" FormName="CreateVessel">
+    <DataAnnotationsValidator />
+
+    <div>
+        <label for="capacity">Enter Capacity:</label>
+        <InputNumber id="capacity" @bind-Value="vessel.Capacity" />
+    </div>
+
+    <div>
+        <label for="fleet">Fleet:</label>
+        <InputText placeholder="Enter Fleet Name" @bind-Value="vessel.Fleet"/>
+    </div>
+
+    <button type="submit">Create Vessel</button>
+</EditForm>
+
+<p>@successResponse</p>
+<p>@errorResponse</p>
+
+@code {
+    private VesselDTO vessel = new VesselDTO();
+    private string errorResponse = "";
+    private string successResponse = "";
+    private async Task HandleValidSubmit()
+    
+    {
+        errorResponse = "";
+        successResponse = "";
+        try
+        {
+            var response = await Http.PostAsJsonAsync("https://localhost:44370/api/FleetAPI/CreateVessel", vessel);
+            if (response.IsSuccessStatusCode)
+            {
+                var createdVessel = await response.Content.ReadFromJsonAsync<Vessel>();
+                successResponse = "Vessel created!";
+            }
+            else
+            {
+                errorResponse = await response.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exception (e.g., network issues)
+            successResponse = $"Exception: {ex.Message}";
+        }
+    }
+}

@@ -1,0 +1,40 @@
+﻿@page "/CreateContainer"
+@using API.Models
+@inject HttpClient Http
+@rendermode InteractiveServer
+
+<h3>Create Container</h3>
+
+<button @onclick="CreateContainerAsync">Create Container</button>
+
+<p>@successResponse</p>
+<p>@errorResponse</p>
+
+@code {
+    private string successResponse = "";
+    private string errorResponse = "";
+
+    private async Task CreateContainerAsync()
+    {
+        errorResponse = "";
+        successResponse = "";
+
+        try
+        {
+            var response = await Http.PostAsync("https://localhost:44370/api/FleetAPI/CreateContainer", null);
+            if (response.IsSuccessStatusCode)
+            {
+                var container = await response.Content.ReadFromJsonAsync<Container>();
+                successResponse = $"Container created with ID: {container.Id}";
+            }
+            else
+            {
+                errorResponse = await response.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorResponse = $"Exception: {ex.Message}";
+        }
+    }
+}
